@@ -1,9 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'capybara'
-gem 'capybara-mechanize'
-gem 'pry'
+gemspec
 
-group :test do
-  gem 'rspec'
+group :development do
+  gem 'pry'
 end
