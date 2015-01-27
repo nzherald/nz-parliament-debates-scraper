@@ -12,7 +12,7 @@ module NZParliamentDebatesScraper
       @id = options['Document ID']
       @type = options['Document Type']
       @parliament_number = options['Parliament #']
-      @ref, @session, @volume, @week = options['Ref'], parse_ref(options['Ref'])
+      @ref, @session, @volume, @week = options['Ref'], parse_ref(options['Ref']) if options['Ref']
       @status = options['Status']
       @language = options['Language']
     end

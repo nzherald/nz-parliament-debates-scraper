@@ -1,17 +1,21 @@
+require 'logger'
+
 module NZParliamentDebatesScraper
   class Scraper
     include Capybara::DSL
-    attr_reader :debates
+    attr_reader :debates, :logger
 
     DEBATE_URL = "#{BASE_URL}/en-nz/pb/debates/debates?Criteria.ViewAll=1"
 
-    def initialize
+    def initialize(logger = Logger.new(STDOUT))
+      @logger = logger
       Capybara.app_host = 'http://www.parliament.nz'
       Capybara.default_driver = :mechanize
       Capybara.app = true
     end
 
     def run
+      logger.info "Visiting #{DEBATE_URL}"
       visit DEBATE_URL
       debate_links = all('.listing tbody tr a').to_a
       debate_links.shift # first link is "Next"
@@ -20,6 +24,7 @@ module NZParliamentDebatesScraper
     end
 
     def extract_debate_metadata(debate)
+      logger.info "Visiting #{debate.metadata_url}"
       visit debate.metadata_url
       keys = all('.copy dl dt').map(&:text)
       values = all('.copy dl dd').map(&:text)
