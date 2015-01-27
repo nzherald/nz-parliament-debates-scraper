@@ -24,6 +24,12 @@ Or install it yourself as:
 
 ## Usage
 
+To scrape:
+
+```
+  NZParliamentDebatesScraper.run
+```
+
 TODO: Write usage instructions here
 
 ## Contributing
