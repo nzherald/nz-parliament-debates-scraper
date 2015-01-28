@@ -11,5 +11,7 @@ module NZParliamentDebatesScraper
 end
 
 require 'nz_parliament_debates_scraper/metadata'
+require 'nz_parliament_debates_scraper/dc_metadata'
+require 'nz_parliament_debates_scraper/nzgls_metadata'
 require 'nz_parliament_debates_scraper/debate'
 require 'nz_parliament_debates_scraper/scraper'
