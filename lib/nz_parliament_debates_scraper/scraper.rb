@@ -21,6 +21,7 @@ module NZParliamentDebatesScraper
       debate_links.shift # first link is "Next"
       @debates = debate_links.map { |link| Debate.from_link(link) }
       debates.each { |debate| debate.metadata = extract_cms_metadata(debate) }
+      debates.each { |debate| extract_debate_content(debate) }
     end
 
     def extract_cms_metadata(debate)
@@ -31,9 +32,21 @@ module NZParliamentDebatesScraper
       Hash[keys.zip(values)]
     end
 
-    def extract_html_metatag(debate)
+    def extract_debate_content(debate)
       logger.info "Visiting #{debate.url}"
       visit debate.url
+      extract_html_metatag(debate)
+      title = extract_document_title
+      reference = extract_document_reference
+      document_debate_element = extract_document_debate_element
+      css_class = document_debate_element[:class]
+      speeches = extract_document_speeches(document_debate_element)
+      { title: title, reference: reference, speeches: speeches, css_class: css_class }
+    end
+
+    private
+
+    def extract_html_metatag(debate)
       meta_tags = all('meta', visible: false).map { |m| Hash[[m.native.values]] }
       meta_tags.reduce({}, :merge)
 
@@ -48,7 +61,22 @@ module NZParliamentDebatesScraper
       # NZGLSMetadata.new(nzgls_meta_tags)
     end
 
-    private
+    def extract_document_title
+      find('#mainContent #content .copy .section a[name="DocumentTitle"] + h1').text
+    end
+
+    def extract_document_reference
+      find('#mainContent #content .copy .section a[name="DocumentReference"] + p').text
+    end
+
+    def extract_document_debate_element
+      find('#mainContent #content .copy .section a[name="DocumentReference"] + p + div')
+    end
+
+    def extract_document_speeches(el)
+      el.all('div.Speech')
+    end
+
 
     def question_time_urls
       PARLIAMENTS.map do |parliament|
