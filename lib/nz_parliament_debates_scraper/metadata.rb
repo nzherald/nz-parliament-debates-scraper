@@ -1,3 +1,5 @@
+require 'date'
+
 module NZParliamentDebatesScraper
   class Metadata
     attr_reader :short_title, :date, :business_unit, :content_provider,
