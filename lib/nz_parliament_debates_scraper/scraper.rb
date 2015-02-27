@@ -15,8 +15,7 @@ module NZParliamentDebatesScraper
     end
 
     def run
-      logger.info "Visiting #{DEBATE_URL}"
-      visit DEBATE_URL
+      load_url DEBATE_URL
       debate_links = all('.listing tbody tr a').to_a
       debate_links.shift # first link is "Next"
       @debates = debate_links.map { |link| Debate.from_link(link) }
@@ -25,16 +24,14 @@ module NZParliamentDebatesScraper
     end
 
     def extract_cms_metadata(debate)
-      logger.info "Visiting #{debate.metadata_url}"
-      visit debate.metadata_url
+      load_url debate.metadata_url
       keys = all('.copy dl dt').map(&:text)
       values = all('.copy dl dd').map(&:text)
       Hash[keys.zip(values)]
     end
 
     def extract_debate_content(debate)
-      logger.info "Visiting #{debate.url}"
-      visit debate.url
+      load_url debate.url
       extract_html_metatag(debate)
       title = extract_document_title
       reference = extract_document_reference
@@ -61,6 +58,11 @@ module NZParliamentDebatesScraper
       # NZGLSMetadata.new(nzgls_meta_tags)
     end
 
+    def load_url(url)
+      logger.info "Visiting #{url}"
+      visit URL.escape url
+    end
+
     def extract_document_title
       find('#mainContent #content .copy .section a[name="DocumentTitle"] + h1').text
     end
@@ -76,7 +78,6 @@ module NZParliamentDebatesScraper
     def extract_document_speeches(el)
       el.all('div.Speech')
     end
-
 
     def question_time_urls
       PARLIAMENTS.map do |parliament|
