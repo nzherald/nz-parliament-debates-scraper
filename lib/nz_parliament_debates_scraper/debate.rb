@@ -1,6 +1,7 @@
 module NZParliamentDebatesScraper
   class Debate
     attr_reader :name, :url, :metadata_url, :metadata
+    attr_accessor :content
 
     def initialize(name, url, metadata_url)
       @name, @url, @metadata_url = name, url, metadata_url

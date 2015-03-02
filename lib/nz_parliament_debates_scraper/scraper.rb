@@ -20,7 +20,7 @@ module NZParliamentDebatesScraper
       debate_links.shift # first link is "Next"
       @debates = debate_links.map { |link| Debate.from_link(link) }
       debates.each { |debate| debate.metadata = extract_cms_metadata(debate) }
-      debates.each { |debate| extract_debate_content(debate) }
+      debates.each { |debate| debate.content = extract_debate_content(debate) }
     end
 
     def extract_cms_metadata(debate)
@@ -60,13 +60,13 @@ module NZParliamentDebatesScraper
 
     def load_url(url)
       logger.info "Visiting #{url}"
-      visit URL.escape url
+      visit URI.escape url
     end
 
     def extract_document_title
       find('#mainContent #content .copy .section a[name="DocumentTitle"] + h1').text
     rescue Capybara::ElementNotFound # http://www.parliament.nz/en-nz/pb/debates/debates/49HansD_20110906_00001046/trade-marks-international-treaties-and-enforcement-amendment
-      find('#mainContent #content .copy .section:first + h1').text
+      find('#mainContent #content .copy .section:first h1').text
     end
 
     def extract_document_reference
