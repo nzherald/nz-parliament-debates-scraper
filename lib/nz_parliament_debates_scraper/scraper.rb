@@ -65,6 +65,8 @@ module NZParliamentDebatesScraper
 
     def extract_document_title
       find('#mainContent #content .copy .section a[name="DocumentTitle"] + h1').text
+    rescue Capybara::ElementNotFound # http://www.parliament.nz/en-nz/pb/debates/debates/49HansD_20110906_00001046/trade-marks-international-treaties-and-enforcement-amendment
+      find('#mainContent #content .copy .section:first + h1').text
     end
 
     def extract_document_reference
